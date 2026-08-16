@@ -99,14 +99,22 @@
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         // ⚠️ REPLACE THIS OBJECT WITH YOUR FIREBASE CONFIG ⚠️
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "firebase/app";
+        import { getAnalytics } from "firebase/analytics";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "YOUR_APP_ID"
+          apiKey: "AIzaSyDbXTFtwtw3AaKTDVcUJErepLLJFty3WJk",
+          authDomain: "emergencyhorn.firebaseapp.com",
+          projectId: "emergencyhorn",
+          storageBucket: "emergencyhorn.firebasestorage.app",
+          messagingSenderId: "399620252526",
+          appId: "1:399620252526:web:78f93d8ac95212c34ed77f",
+          measurementId: "G-6SQ0QELH06"
         };
 
         const app = initializeApp(firebaseConfig);
