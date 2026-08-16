@@ -117,10 +117,9 @@
           measurementId: "G-6SQ0QELH06"
         };
         
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-
+        const db = getDatabase(app);
+        
         const btn = document.getElementById('emergencyBtn');
         const alarm = document.getElementById('alarmSound');
         const statusText = document.getElementById('status');
