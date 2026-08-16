@@ -98,8 +98,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // ⚠️ REPLACE THIS OBJECT WITH YOUR FIREBASE CONFIG ⚠️
-        // Import the functions you need from the SDKs you need
+       // Import the functions you need from the SDKs you need
         import { initializeApp } from "firebase/app";
         import { getAnalytics } from "firebase/analytics";
         // TODO: Add SDKs for Firebase products that you want to use
@@ -110,16 +109,18 @@
         const firebaseConfig = {
           apiKey: "AIzaSyDbXTFtwtw3AaKTDVcUJErepLLJFty3WJk",
           authDomain: "emergencyhorn.firebaseapp.com",
+          databaseURL: "https://emergencyhorn-default-rtdb.europe-west1.firebasedatabase.app",
           projectId: "emergencyhorn",
           storageBucket: "emergencyhorn.firebasestorage.app",
           messagingSenderId: "399620252526",
           appId: "1:399620252526:web:78f93d8ac95212c34ed77f",
           measurementId: "G-6SQ0QELH06"
         };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
         
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
         const btn = document.getElementById('emergencyBtn');
         const alarm = document.getElementById('alarmSound');
         const statusText = document.getElementById('status');
