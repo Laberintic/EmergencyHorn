@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMERGENCY BUTTON</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            margin: 0;
+            font-family: sans-serif;
+            color: white;
+            flex-direction: column;
+        }
+
+        /* Container adds the glowing pulse animation */
+        .button-container {
+            position: relative;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+            50% { box-shadow: 0 0 60px rgba(255, 0, 0, 0.7); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+        }
+
+        /* The Big Red Button CSS */
+        .button {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(145deg, #ff1a1a, #cc0000);
+            border-radius: 50%;
+            border: none;
+            /* Creates the deep 3D bevel and drop shadow */
+            box-shadow: 
+                inset 0 -15px 15px rgba(0,0,0,0.3),
+                inset 0 15px 15px rgba(255,255,255,0.4),
+                0 20px 0 0 #8b0000, 
+                0 30px 25px rgba(0,0,0,0.6);
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            user-select: none;
+            letter-spacing: 2px;
+        }
+
+        /* Hover state */
+        .button:hover {
+            background: linear-gradient(145deg, #ff3333, #e60000);
+        }
+
+        /* The 'Pressed' Animation State */
+        .button:active, .button.pressed {
+            transform: translateY(20px);
+            /* Flattens the 3D edge so it looks pushed into the page */
+            box-shadow: 
+                inset 0 -15px 15px rgba(0,0,0,0.3),
+                inset 0 15px 15px rgba(255,255,255,0.4),
+                0 0 0 0 #8b0000, 
+                0 10px 10px rgba(0,0,0,0.6);
+            background: #cc0000;
+        }
+
+        #status {
+            margin-top: 50px;
+            font-family: monospace;
+            color: #4CAF50;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="button-container">
+        <button id="emergencyBtn" class="button">PRESS</button>
+    </div>
+    <div id="status">Connecting to network...</div>
+
+    <!-- Make sure your audio file is in the same folder and named emergency.mp3 -->
+    <audio id="alarmSound" src="emergency.mp3" preload="auto"></audio>
+
+    <!-- Firebase v10 Modular SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // ⚠️ REPLACE THIS OBJECT WITH YOUR FIREBASE CONFIG ⚠️
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        const btn = document.getElementById('emergencyBtn');
+        const alarm = document.getElementById('alarmSound');
+        const statusText = document.getElementById('status');
+        
+        // Watch a single database node called 'lastPressed'
+        const triggerRef = ref(db, 'lastPressed');
+
+        // When YOU click the button, tell the database the exact time it happened
+        btn.addEventListener('click', () => {
+            set(triggerRef, Date.now());
+        });
+
+        // Listen for ANYONE updating the database
+        let initialLoad = true;
+        onValue(triggerRef, (snapshot) => {
+            statusText.innerText = "System Armed - Ready";
+            statusText.style.color = "#4CAF50";
+            
+            // Prevent the alarm from going off the second someone opens the page
+            if (initialLoad) {
+                initialLoad = false;
+                return; 
+            }
+
+            // Trigger the visual animation
+            btn.classList.add('pressed');
+            setTimeout(() => {
+                btn.classList.remove('pressed');
+            }, 300); // Button stays pushed down for 300ms
+
+            // Play the sound
+            alarm.currentTime = 0; // Reset audio to start in case it's already playing
+            
+            // Browsers block audio unless the user has interacted with the page first.
+            alarm.play().catch(error => {
+                statusText.innerText = "⚠️ Auto-play blocked by your browser.\nClick anywhere on the background to enable sound!";
+                statusText.style.color = "#ff3333";
+            });
+        });
+    </script>
+</body>
+</html>
